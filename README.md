@@ -1,0 +1,3 @@
+External Dependecies 
+- FFmpeg
+- MiKTeX
