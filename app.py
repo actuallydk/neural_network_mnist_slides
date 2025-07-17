@@ -490,65 +490,55 @@ class MyScene(Slide):
             "Object detection in CCTV footage",
             "Photo search (Google Drive)"
         ]
-        self.play(Write(img_head))
-        for i, pt in enumerate(img_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(img_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(img_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in img_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(img_head, DOWN, buff=1.2)
+        self.play(Write(img_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
         # Slide: Speech recognition
         speech_head = MarkupText('<span fgcolor="{}">Speech recognition</span>'.format(GREEN_B), font_size=54).to_edge(UP)
         speech_points = ["Virtual assistants (Siri, Google Assistant)"]
-        self.play(Write(speech_head))
-        for i, pt in enumerate(speech_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(speech_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(speech_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in speech_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(speech_head, DOWN, buff=1.2)
+        self.play(Write(speech_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
         # Slide: Medical diagnosis
         med_head = MarkupText('<span fgcolor="{}">Medical diagnosis</span>'.format(RED), font_size=54).to_edge(UP)
         med_points = ["AI-assisted disease detection from patient data"]
-        self.play(Write(med_head))
-        for i, pt in enumerate(med_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(med_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(med_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in med_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(med_head, DOWN, buff=1.2)
+        self.play(Write(med_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
         # Slide: Drug Discovery
         drug_head = MarkupText('<span fgcolor="{}">Drug Discovery</span>'.format(PURPLE_B), font_size=54).to_edge(UP)
         drug_points = ["Accelerating new medicine development"]
-        self.play(Write(drug_head))
-        for i, pt in enumerate(drug_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(drug_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(drug_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in drug_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(drug_head, DOWN, buff=1.2)
+        self.play(Write(drug_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
         # Slide: Protein Structure Discovery
         prot_head = MarkupText('<span fgcolor="{}">Protein Structure Discovery</span>'.format(ORANGE), font_size=54).to_edge(UP)
         prot_points = ["AlphaFold: Nobel-level protein folding predictions"]
-        self.play(Write(prot_head))
-        for i, pt in enumerate(prot_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(prot_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(prot_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in prot_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(prot_head, DOWN, buff=1.2)
+        self.play(Write(prot_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
@@ -558,13 +548,11 @@ class MyScene(Slide):
             "Neural networks as the core of language models",
             "Text generation, Q&amp;A, and more"
         ]
-        self.play(Write(chat_head))
-        for i, pt in enumerate(chat_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(chat_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(chat_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in chat_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(chat_head, DOWN, buff=1.2)
+        self.play(Write(chat_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
 
@@ -576,12 +564,10 @@ class MyScene(Slide):
             "Recommender systems",
             "Stock market prediction"
         ]
-        self.play(Write(misc_head))
-        for i, pt in enumerate(misc_points):
-            bullet = MarkupText(f"• {pt}", font_size=40).next_to(misc_head, DOWN, buff=1.2 + i*0.9)
-            self.play(FadeIn(bullet))
-            self.wait(1.1)
-            if i < len(misc_points) - 1:
-                self.play(FadeOut(bullet))
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in misc_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(misc_head, DOWN, buff=1.2)
+        self.play(Write(misc_head), FadeIn(bullets))
         self.next_slide()
         self.clear()
