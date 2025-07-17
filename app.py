@@ -221,119 +221,306 @@ class MyScene(Slide):
         self.add(output_arrow, output_label)
         self.next_slide()
 
-        # --- CLEAR AND NEW SLIDE: SMALL NETWORK WITH WEIGHTS, BIASES, AND CALCULATION ---
+        # --- NEW SLIDE: 2-3-2 NEURAL NETWORK ---
         self.clear()
         self.next_slide()
-        # Small network: 2 input, 3 hidden, 1 output (with increased spacing and size)
-        small_input_x = LEFT * 5
-        small_hidden_x = ORIGIN
-        small_output_x = RIGHT * 5
-        small_input_nodes = VGroup()
-        small_hidden_nodes = VGroup()
-        small_output_node = Circle(radius=0.25, color=YELLOW).move_to(small_output_x)
-        # Input nodes (larger spacing)
+        
+        # Network configuration: 2 inputs, 3 hidden, 2 outputs
+        input_x = LEFT * 4
+        hidden_x = ORIGIN
+        output_x = RIGHT * 4
+        # Create input nodes
+        input_nodes = VGroup()
         for i in range(2):
-            pos = small_input_x + UP * (0.8 - i * 1.6)
+            pos = input_x + UP * (0.8 - i * 1.6)
             node = Circle(radius=0.25, color=BLUE).move_to(pos)
-            small_input_nodes.add(node)
-        # Hidden nodes (larger spacing)
+            input_nodes.add(node)
+        # Create hidden layer nodes
+        hidden_nodes = VGroup()
         for i in range(3):
-            pos = small_hidden_x + UP * (1.6 - i * 1.6)
+            pos = hidden_x + UP * (1.6 - i * 1.6)
             node = Circle(radius=0.25, color=WHITE).move_to(pos)
-            small_hidden_nodes.add(node)
+            hidden_nodes.add(node)
+        # Create output nodes
+        output_nodes = VGroup()
+        for i in range(2):
+            pos = output_x + UP * (0.8 - i * 1.6)
+            node = Circle(radius=0.25, color=YELLOW).move_to(pos)
+            output_nodes.add(node)
         # Add all nodes
-        self.play(Write(small_input_nodes), Write(small_hidden_nodes), Write(small_output_node))
-        # Draw and label weights (input→hidden, hidden→output) with larger font
+        self.play(Write(input_nodes), Write(hidden_nodes), Write(output_nodes))
+        self.next_slide()
+        
+        # Draw connections and weights step by step
         weight_labels = VGroup()
-        small_lines = VGroup()
-        for i, inp in enumerate(small_input_nodes):
-            for j, hid in enumerate(small_hidden_nodes):
+        connection_lines = VGroup()
+        
+        # First draw all lines
+        all_lines = []
+        for i, inp in enumerate(input_nodes):
+            for j, hid in enumerate(hidden_nodes):
                 line = Line(inp.get_center(), hid.get_center(), stroke_width=3, color=GREY_C, stroke_opacity=0.7)
-                label = MathTex(f"w_{{{j+1}{i+1}}}", color=YELLOW).scale(1.0)
-                label.move_to(inp.get_center() + 0.6*(hid.get_center()-inp.get_center()) + UP*0.25)
-                self.add(line, label)
-                small_lines.add(line)
+                all_lines.append(line)
+                connection_lines.add(line)
+        # Hidden to output connections
+        for j, hid in enumerate(hidden_nodes):
+            for k, out in enumerate(output_nodes):
+                line = Line(hid.get_center(), out.get_center(), stroke_width=3, color=GREY_C, stroke_opacity=0.7)
+                all_lines.append(line)
+                connection_lines.add(line)
+        
+        # Animate lines appearing
+        self.play(Create(connection_lines), run_time=1.5)
+        self.next_slide()
+        
+        # Add weight labels with animation
+        weight_labels_list = []
+        for i, inp in enumerate(input_nodes):
+            for j, hid in enumerate(hidden_nodes):
+                start = inp.get_center()
+                end = hid.get_center()
+                # Place at 40% along the line
+                pos = start + 0.4 * (end - start)
+                direction = end - start
+                perp = np.array([-direction[1], direction[0], 0])
+                perp = perp / np.linalg.norm(perp) if np.linalg.norm(perp) > 0 else perp
+                offset = 0.25 * perp
+                angle = np.arctan2(direction[1], direction[0])
+                outward = LEFT * 0.15 if pos[0] < 0 else RIGHT * 0.15
+                label = MathTex(f"w_{{{j+1}{i+1}}}", color=WHITE).scale(0.5)
+                label.move_to(pos + offset + outward)
+                label.rotate(angle)
+                weight_labels_list.append(label)
                 weight_labels.add(label)
-        for j, hid in enumerate(small_hidden_nodes):
-            line = Line(hid.get_center(), small_output_node.get_center(), stroke_width=3, color=GREY_C, stroke_opacity=0.7)
-            label = MathTex(f"w_{{o{j+1}}}", color=YELLOW).scale(1.0)
-            label.move_to(hid.get_center() + 0.6*(small_output_node.get_center()-hid.get_center()) + UP*0.25)
-            self.add(line, label)
-            small_lines.add(line)
-            weight_labels.add(label)
-        # Label biases for hidden and output nodes (larger font)
+        # Hidden to output weights (use v for right side, 60% along the line)
+        for j, hid in enumerate(hidden_nodes):
+            for k, out in enumerate(output_nodes):
+                start = hid.get_center()
+                end = out.get_center()
+                # Place at 60% along the line
+                pos = start + 0.6 * (end - start)
+                direction = end - start
+                perp = np.array([-direction[1], direction[0], 0])
+                perp = perp / np.linalg.norm(perp) if np.linalg.norm(perp) > 0 else perp
+                offset = 0.25 * perp
+                angle = np.arctan2(direction[1], direction[0])
+                outward = LEFT * 0.15 if pos[0] < 0 else RIGHT * 0.15
+                label = MathTex(f"v_{{{k+1}{j+1}}}", color=WHITE).scale(0.5)
+                label.move_to(pos + offset + outward)
+                label.rotate(angle)
+                weight_labels_list.append(label)
+                weight_labels.add(label)
+        
+        # Animate weight labels appearing one by one
+        for label in weight_labels_list:
+            self.play(Write(label), run_time=0.2)
+        self.next_slide()
+        
+        # Add bias labels with animation
         bias_labels = VGroup()
-        for j, hid in enumerate(small_hidden_nodes):
-            bias = MathTex(f"b_{{{j+1}}}", color=RED).scale(1.2).next_to(hid, LEFT, buff=0.4)
-            self.add(bias)
+        bias_labels_list = []
+        for j, hid in enumerate(hidden_nodes):
+            bias = MathTex(f"b_{{{j+1}}}", color=RED).scale(0.6).next_to(hid, LEFT, buff=0.6)
+            bias_labels_list.append(bias)
             bias_labels.add(bias)
-        bias_out = MathTex("b_o", color=RED).scale(1.2).next_to(small_output_node, LEFT, buff=0.4)
-        self.add(bias_out)
-        bias_labels.add(bias_out)
+        for k, out in enumerate(output_nodes):
+            bias = MathTex(f"b_{{{k+1}}}", color=RED).scale(0.6).next_to(out, LEFT, buff=0.6)
+            bias_labels_list.append(bias)
+            bias_labels.add(bias)
+        
+        # Animate bias labels appearing one by one
+        for bias in bias_labels_list:
+            self.play(Write(bias), run_time=0.2)
         self.next_slide()
-        # Move network up to make room for equations
-        network_group = VGroup(small_input_nodes, small_hidden_nodes, small_output_node, small_lines, weight_labels, bias_labels)
-        self.play(network_group.animate.move_to(UP*2.5))
-        # Show the general formula (larger font)
-        calc_formula = MathTex(r"y = \sigma(w_{o1}h_1 + w_{o2}h_2 + w_{o3}h_3 + b_o)", font_size=48).move_to(DOWN*0.5)
-        self.play(Write(calc_formula))
+        
+        # Shrink the entire network
+        network_group = VGroup(input_nodes, hidden_nodes, output_nodes, connection_lines, weight_labels, bias_labels)
+        self.play(network_group.animate.scale(0.7).move_to(UP * 1.5))
         self.next_slide()
-        # Step-by-step: highlight each multiplication, fade others
-        # Step 1: Highlight w_{o1}h_1
-        # Fade other lines and formula
-        fade_lines = [small_lines[1], small_lines[2]]
-        self.play(
-            *[l.animate.set_color(GREY_C).set_opacity(0.3) for l in fade_lines],
-            small_lines[0].animate.set_color(YELLOW).set_stroke(width=5),
-            weight_labels[5].animate.set_color(YELLOW).scale(1.2),
-            calc_formula.animate.set_opacity(0.3)
-        )
-        step1 = MathTex(r"w_{o1} \times h_1 = 0.8 \times 0.5 = 0.4", font_size=44, color=YELLOW).move_to(DOWN*0.5)
-        self.play(Write(step1))
+        
+        # Add equation at the bottom
+        equation = MathTex(r"y_1 = \sigma(w_{11}h_1 + w_{12}h_2 + w_{13}h_3 + b_1)", font_size=36, color=WHITE).move_to(DOWN * 1.5)
+        equation2 = MathTex(r"y_2 = \sigma(w_{21}h_1 + w_{22}h_2 + w_{23}h_3 + b_2)", font_size=36, color=WHITE).move_to(DOWN * 2.2)
+        self.play(Write(equation))
         self.next_slide()
-        # Step 2: Highlight w_{o2}h_2
-        self.play(
-            small_lines[0].animate.set_color(GREY_C).set_stroke(width=3).set_opacity(0.3),
-            weight_labels[5].animate.set_color(YELLOW).scale(1.0),
-            small_lines[1].animate.set_color(YELLOW).set_stroke(width=5).set_opacity(1.0),
-            weight_labels[6].animate.set_color(YELLOW).scale(1.2),
-            FadeOut(step1, shift=DOWN*0.5)
-        )
-        step2 = MathTex(r"w_{o2} \times h_2 = 0.2 \times 0.7 = 0.14", font_size=44, color=YELLOW).move_to(DOWN*0.5)
-        self.play(Write(step2))
+        self.play(Write(equation2))
         self.next_slide()
-        # Step 3: Highlight w_{o3}h_3
-        self.play(
-            small_lines[1].animate.set_color(GREY_C).set_stroke(width=3).set_opacity(0.3),
-            weight_labels[6].animate.set_color(YELLOW).scale(1.0),
-            small_lines[2].animate.set_color(YELLOW).set_stroke(width=5).set_opacity(1.0),
-            weight_labels[7].animate.set_color(YELLOW).scale(1.2),
-            FadeOut(step2, shift=DOWN*0.5)
-        )
-        step3 = MathTex(r"w_{o3} \times h_3 = 0.4 \times 0.1 = 0.04", font_size=44, color=YELLOW).move_to(DOWN*0.5)
-        self.play(Write(step3))
+        
+        # Show network architecture
+        arch_text = Text("2-3-2 Neural Network", font_size=24, color=WHITE).move_to(DOWN * 3.0)
+        self.play(Write(arch_text))
         self.next_slide()
-        # Step 4: Show addition with bias
-        self.play(
-            small_lines[2].animate.set_color(GREY_C).set_stroke(width=3).set_opacity(0.3),
-            weight_labels[7].animate.set_color(YELLOW).scale(1.0),
-            bias_out.animate.set_color(WHITE).scale(1.5),
-            FadeOut(step3, shift=DOWN*0.5)
-        )
-        step4 = MathTex(r"0.4 + 0.14 + 0.04 + 0.3 = 0.88", font_size=44, color=BLUE).move_to(DOWN*0.5)
-        self.play(Write(step4))
+
+        # --- NEW SLIDE: RELU AND SIGMOID SIDE BY SIDE ---
+        self.clear()
         self.next_slide()
-        # Step 5: Show final result with activation function
-        self.play(
-            bias_out.animate.set_color(RED).scale(1.2),
-            small_output_node.animate.set_color(WHITE).scale(1.3),
-            FadeOut(step4, shift=DOWN*0.5)
-        )
-        step5 = MathTex(r"y = \sigma(0.88) \approx 0.82", font_size=48, color=YELLOW).move_to(DOWN*0.5)
-        self.play(Write(step5))
-        # Final highlight of the output
-        self.play(
-            small_output_node.animate.set_color(YELLOW).scale(1.0),
-            step5.animate.set_color(WHITE)
-        )
+        
+        # Axes for ReLU
+        relu_axes = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[-1, 4, 1],
+            x_length=5,
+            y_length=3,
+            axis_config={"include_numbers": False},
+        ).to_edge(LEFT, buff=1.5)
+        relu_graph = relu_axes.plot(lambda x: max(0, x), color=YELLOW)
+        relu_label = MathTex(r"\text{ReLU}(x)", font_size=32, color=YELLOW).next_to(relu_axes, UP)
+        
+        # Axes for Sigmoid
+        sigmoid_axes = Axes(
+            x_range=[-4, 4, 1],
+            y_range=[0, 1, 0.2],
+            x_length=5,
+            y_length=3,
+            axis_config={"include_numbers": False},
+        ).to_edge(RIGHT, buff=1.5)
+        sigmoid_graph = sigmoid_axes.plot(lambda x: 1/(1+np.exp(-x)), color=BLUE)
+        sigmoid_label = MathTex(r"\sigma(x)", font_size=32, color=BLUE).next_to(sigmoid_axes, UP)
+        
+        # Show both plots and labels
+        self.play(Create(relu_axes), Create(sigmoid_axes))
+        self.play(Create(relu_graph), Create(sigmoid_graph))
+        self.play(Write(relu_label), Write(sigmoid_label))
+        self.next_slide()
+        
+        # Write 'Activation Functions' below
+        act_text = Text("Activation Functions", font_size=36, color=WHITE).move_to(DOWN * 2.5)
+        self.play(Write(act_text))
+        self.next_slide()
+
+        # --- NEW SLIDE: BACKPROPAGATION ---
+        self.clear()
+        self.next_slide()
+        
+        # Title
+        title = Text("Backpropagation", font_size=72, color=YELLOW)
+        self.play(Write(title))
+        self.next_slide()
+        
+        # Shrink title and move up
+        self.play(title.animate.scale(0.6).move_to(UP * 3))
+        
+        # Bigger network for backpropagation visualization
+        n_input = 5
+        n_hidden = 7
+        n_output = 5
+        input_x = LEFT * 4
+        hidden_x = ORIGIN
+        output_x = RIGHT * 4
+        input_spacing = 0.7
+        hidden_spacing = 0.6
+        output_spacing = 0.7
+        # Input nodes
+        input_nodes = VGroup()
+        for i in range(n_input):
+            pos = input_x + UP * ((n_input-1)/2*input_spacing - i*input_spacing)
+            node = Circle(radius=0.18, color=BLUE).move_to(pos)
+            input_nodes.add(node)
+        # Hidden nodes
+        hidden_nodes = VGroup()
+        for i in range(n_hidden):
+            pos = hidden_x + UP * ((n_hidden-1)/2*hidden_spacing - i*hidden_spacing)
+            node = Circle(radius=0.18, color=WHITE).move_to(pos)
+            hidden_nodes.add(node)
+        # Output nodes
+        output_nodes = VGroup()
+        for i in range(n_output):
+            pos = output_x + UP * ((n_output-1)/2*output_spacing - i*output_spacing)
+            node = Circle(radius=0.18, color=YELLOW).move_to(pos)
+            output_nodes.add(node)
+        # Show network structure
+        self.play(Write(input_nodes), Write(hidden_nodes), Write(output_nodes))
+        self.next_slide()
+        # Add connections
+        connections = VGroup()
+        # Input to hidden
+        for inp in input_nodes:
+            for hid in hidden_nodes:
+                line = Line(inp.get_center(), hid.get_center(), stroke_width=1.5, color=GREY_C, stroke_opacity=0.7)
+                connections.add(line)
+        # Hidden to output
+        for hid in hidden_nodes:
+            for out in output_nodes:
+                line = Line(hid.get_center(), out.get_center(), stroke_width=1.5, color=GREY_C, stroke_opacity=0.7)
+                connections.add(line)
+        self.play(Create(connections))
+        self.next_slide()
+        # Show forward pass with line spawning
+        # First, hide all connections
+        self.play(FadeOut(connections))
+        
+        # Spawn input to hidden connections in blue (forward pass)
+        input_hidden_lines = VGroup()
+        for inp in input_nodes:
+            for hid in hidden_nodes:
+                line = Line(inp.get_center(), hid.get_center(), stroke_width=2.5, color=BLUE)
+                input_hidden_lines.add(line)
+        
+        # Animate lines appearing one by one
+        for line in input_hidden_lines:
+            self.play(Create(line), run_time=0.1)
+        
+        # Spawn hidden to output connections in green (forward pass)
+        hidden_output_lines = VGroup()
+        for hid in hidden_nodes:
+            for out in output_nodes:
+                line = Line(hid.get_center(), out.get_center(), stroke_width=2.5, color=GREEN)
+                hidden_output_lines.add(line)
+        
+        # Animate lines appearing one by one
+        for line in hidden_output_lines:
+            self.play(Create(line), run_time=0.1)
+        
+        forward_text = Text("Forward Pass", font_size=28, color=WHITE).move_to(DOWN * 2)
+        self.play(Write(forward_text))
+        self.next_slide()
+        
+        # Clear forward pass and show error
+        self.play(FadeOut(input_hidden_lines), FadeOut(hidden_output_lines), FadeOut(forward_text))
+        
+        # Show error at output (pick the center output node)
+        center_out = output_nodes[n_output//2]
+        error_circle = Circle(radius=0.25, color=RED, stroke_width=4).move_to(center_out.get_center())
+        error_text = Text("Error", font_size=20, color=RED).next_to(error_circle, UP)
+        self.play(Create(error_circle), Write(error_text))
+        self.next_slide()
+        
+        # Show backward pass with line spawning
+        # Spawn hidden to output connections in red (backward pass)
+        backward_hidden_output = VGroup()
+        for hid in hidden_nodes:
+            for out in output_nodes:
+                line = Line(out.get_center(), hid.get_center(), stroke_width=2.5, color=RED)
+                backward_hidden_output.add(line)
+        
+        # Animate lines appearing one by one
+        for line in backward_hidden_output:
+            self.play(Create(line), run_time=0.1)
+        
+        # Spawn input to hidden connections in orange (backward pass)
+        backward_input_hidden = VGroup()
+        for hid in hidden_nodes:
+            for inp in input_nodes:
+                line = Line(hid.get_center(), inp.get_center(), stroke_width=2.5, color=ORANGE)
+                backward_input_hidden.add(line)
+        
+        # Animate lines appearing one by one
+        for line in backward_input_hidden:
+            self.play(Create(line), run_time=0.1)
+        
+        backward_text = Text("Backward Pass (Gradients)", font_size=28, color=WHITE).move_to(DOWN * 2)
+        self.play(Write(backward_text))
+        self.next_slide()
+        
+        # Show gradient descent formula
+        formula = MathTex(r"\text{Weight Update: } w_{new} = w_{old} - \alpha \frac{\partial E}{\partial w}", font_size=32, color=WHITE).move_to(DOWN *2.8)
+        self.play(Write(formula))
+        self.next_slide()
+        # Animate the error shrinking (learning)
+        self.play(error_circle.animate.scale(0.7), run_time=1)
+        self.play(error_circle.animate.scale(0.7), run_time=1)
+        self.next_slide()
+        # Show "Learning" text
+        learning_text = Text("Learning!", font_size=36, color=GREEN).move_to(DOWN *3.5)
+        self.play(Write(learning_text))
         self.next_slide()
