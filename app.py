@@ -1,8 +1,9 @@
-from manim import * 
+from manim import *
 from manim_slides import Slide
 import random
 import math
 from manim import Dot, VMobject
+import os
 
 class MyScene(Slide):
     def construct(self):
@@ -17,7 +18,7 @@ class MyScene(Slide):
         svg3_3 = SVGMobject("src/3-3.svg").scale(2).set_color(WHITE)
         svg3_4 = SVGMobject("src/3-4.svg").scale(2).set_color(WHITE)
         group = VGroup(svg3_1, svg3_2, svg3_3, svg3_4).arrange(RIGHT, buff=1)
-        self.play(Write(group))
+        self.play(FadeIn(group))
         self.next_slide()
 
         ul = (-4.0, 2.0, 0.0)  # upper left
@@ -388,139 +389,199 @@ class MyScene(Slide):
         self.play(Write(act_text))
         self.next_slide()
 
-        # --- NEW SLIDE: BACKPROPAGATION ---
+        # --- ANIMATED NEURAL NETWORK FORWARD AND BACKWARD PASS ---
         self.clear()
         self.next_slide()
-        
-        # Title
-        title = Text("Backpropagation", font_size=72, color=YELLOW)
-        self.play(Write(title))
-        self.next_slide()
-        
-        # Shrink title and move up
-        self.play(title.animate.scale(0.6).move_to(UP * 3))
-        
-        # Bigger network for backpropagation visualization
-        n_input = 5
-        n_hidden = 7
-        n_output = 5
+
+        # Network structure: 3 input, 4 hidden, 2 output
         input_x = LEFT * 4
         hidden_x = ORIGIN
         output_x = RIGHT * 4
-        input_spacing = 0.7
-        hidden_spacing = 0.6
-        output_spacing = 0.7
-        # Input nodes
         input_nodes = VGroup()
-        for i in range(n_input):
-            pos = input_x + UP * ((n_input-1)/2*input_spacing - i*input_spacing)
-            node = Circle(radius=0.18, color=BLUE).move_to(pos)
+        for i in range(3):
+            pos = input_x + UP * (1 - i * 1.0)
+            node = Circle(radius=0.25, color=BLUE).move_to(pos)
             input_nodes.add(node)
-        # Hidden nodes
         hidden_nodes = VGroup()
-        for i in range(n_hidden):
-            pos = hidden_x + UP * ((n_hidden-1)/2*hidden_spacing - i*hidden_spacing)
-            node = Circle(radius=0.18, color=WHITE).move_to(pos)
+        for i in range(4):
+            pos = hidden_x + UP * (1.5 - i * 1.0)
+            node = Circle(radius=0.25, color=WHITE).move_to(pos)
             hidden_nodes.add(node)
-        # Output nodes
         output_nodes = VGroup()
-        for i in range(n_output):
-            pos = output_x + UP * ((n_output-1)/2*output_spacing - i*output_spacing)
-            node = Circle(radius=0.18, color=YELLOW).move_to(pos)
+        for i in range(2):
+            pos = output_x + UP * (0.5 - i * 1.0)
+            node = Circle(radius=0.25, color=YELLOW).move_to(pos)
             output_nodes.add(node)
-        # Show network structure
-        self.play(Write(input_nodes), Write(hidden_nodes), Write(output_nodes))
-        self.next_slide()
-        # Add connections
-        connections = VGroup()
-        # Input to hidden
-        for inp in input_nodes:
-            for hid in hidden_nodes:
-                line = Line(inp.get_center(), hid.get_center(), stroke_width=1.5, color=GREY_C, stroke_opacity=0.7)
-                connections.add(line)
-        # Hidden to output
-        for hid in hidden_nodes:
-            for out in output_nodes:
-                line = Line(hid.get_center(), out.get_center(), stroke_width=1.5, color=GREY_C, stroke_opacity=0.7)
-                connections.add(line)
-        self.play(Create(connections))
-        self.next_slide()
-        # Show forward pass with line spawning
-        # First, hide all connections
-        self.play(FadeOut(connections))
-        
-        # Spawn input to hidden connections in blue (forward pass)
+
+        # Draw all nodes and lines with dim colors
         input_hidden_lines = VGroup()
-        for inp in input_nodes:
-            for hid in hidden_nodes:
-                line = Line(inp.get_center(), hid.get_center(), stroke_width=2.5, color=BLUE)
+        for i_node in input_nodes:
+            for h_node in hidden_nodes:
+                line = Line(i_node.get_center(), h_node.get_center(), color=GREY)
+                line.set_opacity(0.5)
                 input_hidden_lines.add(line)
-        
-        # Animate lines appearing one by one
-        for line in input_hidden_lines:
-            self.play(Create(line), run_time=0.1)
-        
-        # Spawn hidden to output connections in green (forward pass)
         hidden_output_lines = VGroup()
-        for hid in hidden_nodes:
-            for out in output_nodes:
-                line = Line(hid.get_center(), out.get_center(), stroke_width=2.5, color=GREEN)
+        for h_node in hidden_nodes:
+            for o_node in output_nodes:
+                line = Line(h_node.get_center(), o_node.get_center(), color=GREY)
+                line.set_opacity(0.5)
                 hidden_output_lines.add(line)
-        
-        # Animate lines appearing one by one
+
+        self.play(
+            *[FadeIn(mob) for mob in input_nodes],
+            *[FadeIn(mob) for mob in hidden_nodes],
+            *[FadeIn(mob) for mob in output_nodes],
+            *[FadeIn(line) for line in input_hidden_lines],
+            *[FadeIn(line) for line in hidden_output_lines],
+        )
+
+        # Forward Pass text (center top)
+        forward_text = Text("Forward Pass", font_size=36, color=BLUE_B).to_edge(UP)
+        self.play(FadeIn(forward_text))
+
+        # Highlight forward pass: input->hidden (BLUE_B), hidden->output (GREEN_B)
+        for line in input_hidden_lines:
+            self.play(line.animate.set_color(BLUE_B).set_opacity(1.0), run_time=0.08)
         for line in hidden_output_lines:
-            self.play(Create(line), run_time=0.1)
-        
-        forward_text = Text("Forward Pass", font_size=28, color=WHITE).move_to(DOWN * 2)
-        self.play(Write(forward_text))
+            self.play(line.animate.set_color(GREEN_B).set_opacity(1.0), run_time=0.08)
         self.next_slide()
-        
-        # Clear forward pass and show error
-        self.play(FadeOut(input_hidden_lines), FadeOut(hidden_output_lines), FadeOut(forward_text))
-        
-        # Show error at output (pick the center output node)
-        center_out = output_nodes[n_output//2]
-        error_circle = Circle(radius=0.25, color=RED, stroke_width=4).move_to(center_out.get_center())
-        error_text = Text("Error", font_size=20, color=RED).next_to(error_circle, UP)
-        self.play(Create(error_circle), Write(error_text))
+        self.clear()
+
+        # Cross Categorical Entropy Loss (center top)
+        loss_text = Text("Cross Categorical Entropy Loss", font_size=36, color=YELLOW).to_edge(UP)
+        loss_formula = MathTex(r"L(z, y) = -\frac{1}{N} \sum_{n=1}^{N} \sum_{c=1}^{C} y_{n,c} \cdot \log\left( \frac{e^{z_{n,c}}}{\sum_{j=1}^{C} e^{z_{n,j}} + \varepsilon} \right)", font_size=36, color=WHITE).next_to(loss_text, DOWN, buff=0.5)
+        self.play(FadeIn(loss_text), Write(loss_formula))
         self.next_slide()
-        
-        # Show backward pass with line spawning
-        # Spawn hidden to output connections in red (backward pass)
-        backward_hidden_output = VGroup()
-        for hid in hidden_nodes:
-            for out in output_nodes:
-                line = Line(out.get_center(), hid.get_center(), stroke_width=2.5, color=RED)
-                backward_hidden_output.add(line)
-        
-        # Animate lines appearing one by one
-        for line in backward_hidden_output:
-            self.play(Create(line), run_time=0.1)
-        
-        # Spawn input to hidden connections in orange (backward pass)
-        backward_input_hidden = VGroup()
-        for hid in hidden_nodes:
-            for inp in input_nodes:
-                line = Line(hid.get_center(), inp.get_center(), stroke_width=2.5, color=ORANGE)
-                backward_input_hidden.add(line)
-        
-        # Animate lines appearing one by one
-        for line in backward_input_hidden:
-            self.play(Create(line), run_time=0.1)
-        
-        backward_text = Text("Backward Pass (Gradients)", font_size=28, color=WHITE).move_to(DOWN * 2)
-        self.play(Write(backward_text))
+        self.clear()
+
+        # Redraw network for backward pass
+        self.play(
+            *[FadeIn(mob) for mob in input_nodes],
+            *[FadeIn(mob) for mob in hidden_nodes],
+            *[FadeIn(mob) for mob in output_nodes],
+            *[FadeIn(line) for line in input_hidden_lines],
+            *[FadeIn(line) for line in hidden_output_lines],
+        )
+
+        # Backward Pass text (center top)
+        backward_text = Text("Backward Pass", font_size=36, color=RED).to_edge(UP)
+        self.play(FadeIn(backward_text))
+
+        # Highlight backward pass: hidden->output (RED), input->hidden (ORANGE)
+        for line in reversed(hidden_output_lines):
+            self.play(line.animate.set_color(RED).set_opacity(1.0), run_time=0.08)
+        for line in reversed(input_hidden_lines):
+            self.play(line.animate.set_color(ORANGE).set_opacity(1.0), run_time=0.08)
         self.next_slide()
-        
-        # Show gradient descent formula
-        formula = MathTex(r"\text{Weight Update: } w_{new} = w_{old} - \alpha \frac{\partial E}{\partial w}", font_size=32, color=WHITE).move_to(DOWN *2.8)
-        self.play(Write(formula))
+        self.clear()
+
+        # --- APPLICATIONS OF NEURAL NETWORKS SLIDES (IMPROVED) ---
+        # Slide: Applications of Neural Networks (title)
+        app_title = MarkupText('Applications of <span fgcolor="{}">neural networks</span>'.format(YELLOW), font_size=60).move_to(ORIGIN)
+        self.play(Write(app_title))
         self.next_slide()
-        # Animate the error shrinking (learning)
-        self.play(error_circle.animate.scale(0.7), run_time=1)
-        self.play(error_circle.animate.scale(0.7), run_time=1)
+        self.clear()
+
+        # Slide: Image recognition
+        img_head = MarkupText('<span fgcolor="{}">Image recognition</span>'.format(BLUE_B), font_size=54).to_edge(UP)
+        img_points = [
+            "Handwritten digit recognition (MNIST)",
+            "Face ID and security systems",
+            "Object detection in CCTV footage",
+            "Photo search (Google Drive)"
+        ]
+        self.play(Write(img_head))
+        for i, pt in enumerate(img_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(img_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(img_points) - 1:
+                self.play(FadeOut(bullet))
         self.next_slide()
-        # Show "Learning" text
-        learning_text = Text("Learning!", font_size=36, color=GREEN).move_to(DOWN *3.5)
-        self.play(Write(learning_text))
+        self.clear()
+
+        # Slide: Speech recognition
+        speech_head = MarkupText('<span fgcolor="{}">Speech recognition</span>'.format(GREEN_B), font_size=54).to_edge(UP)
+        speech_points = ["Virtual assistants (Siri, Google Assistant)"]
+        self.play(Write(speech_head))
+        for i, pt in enumerate(speech_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(speech_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(speech_points) - 1:
+                self.play(FadeOut(bullet))
         self.next_slide()
+        self.clear()
+
+        # Slide: Medical diagnosis
+        med_head = MarkupText('<span fgcolor="{}">Medical diagnosis</span>'.format(RED), font_size=54).to_edge(UP)
+        med_points = ["AI-assisted disease detection from patient data"]
+        self.play(Write(med_head))
+        for i, pt in enumerate(med_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(med_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(med_points) - 1:
+                self.play(FadeOut(bullet))
+        self.next_slide()
+        self.clear()
+
+        # Slide: Drug Discovery
+        drug_head = MarkupText('<span fgcolor="{}">Drug Discovery</span>'.format(PURPLE_B), font_size=54).to_edge(UP)
+        drug_points = ["Accelerating new medicine development"]
+        self.play(Write(drug_head))
+        for i, pt in enumerate(drug_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(drug_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(drug_points) - 1:
+                self.play(FadeOut(bullet))
+        self.next_slide()
+        self.clear()
+
+        # Slide: Protein Structure Discovery
+        prot_head = MarkupText('<span fgcolor="{}">Protein Structure Discovery</span>'.format(ORANGE), font_size=54).to_edge(UP)
+        prot_points = ["AlphaFold: Nobel-level protein folding predictions"]
+        self.play(Write(prot_head))
+        for i, pt in enumerate(prot_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(prot_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(prot_points) - 1:
+                self.play(FadeOut(bullet))
+        self.next_slide()
+        self.clear()
+
+        # Slide: ChatGPT and LLMs
+        chat_head = MarkupText('<span fgcolor="{}">ChatGPT &amp; LLMs</span>'.format(YELLOW), font_size=54).to_edge(UP)
+        chat_points = [
+            "Neural networks as the core of language models",
+            "Text generation, Q&amp;A, and more"
+        ]
+        self.play(Write(chat_head))
+        for i, pt in enumerate(chat_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(chat_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(chat_points) - 1:
+                self.play(FadeOut(bullet))
+        self.next_slide()
+        self.clear()
+
+        # Slide: Miscellaneous
+        misc_head = MarkupText('<span fgcolor="{}">Miscellaneous</span>'.format(GREY_B), font_size=54).to_edge(UP)
+        misc_points = [
+            "Weather forecasting",
+            "Brain-computer interfaces",
+            "Recommender systems",
+            "Stock market prediction"
+        ]
+        self.play(Write(misc_head))
+        for i, pt in enumerate(misc_points):
+            bullet = MarkupText(f"• {pt}", font_size=40).next_to(misc_head, DOWN, buff=1.2 + i*0.9)
+            self.play(FadeIn(bullet))
+            self.wait(1.1)
+            if i < len(misc_points) - 1:
+                self.play(FadeOut(bullet))
+        self.next_slide()
+        self.clear()
