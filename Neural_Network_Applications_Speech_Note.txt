@@ -1,0 +1,41 @@
+
+Speech Note: Applications of Neural Networks
+--------------------------------------------
+
+Good morning everyone. I'm Shankarakumar, and my part in this project is to explain the applications of neural networks — where and how they are used in real life.
+
+1. Image Recognition
+- Neural networks are used to recognize images.
+- For example: MNIST project (handwritten digit recognition), Face ID on smartphones, CCTV systems in police departments to identify faces and number plates.
+
+2. Speech Recognition
+- Voice assistants like Google Assistant, Siri, and Alexa use neural networks.
+- They help machines understand what we say and respond correctly in real time.
+
+3. Medical Diagnosis
+- Neural networks are used in hospitals to detect diseases from medical data.
+- They help doctors identify cancer, diabetes, and heart problems faster and more accurately.
+
+4. Drug Discovery
+- In medicine, neural networks predict which drug combinations work best.
+- This saves years of research and helps make new medicines faster.
+
+5. Protein Structure Prediction (AlphaFold)
+- A model called AlphaFold predicted how proteins fold — a task that would have taken 50 to 100 years.
+- This was a major scientific breakthrough, and it used deep neural networks.
+
+6. ChatGPT and Large Language Models
+- Neural networks are the building blocks of tools like ChatGPT.
+- They help AI understand and generate human-like text.
+
+7. Other Applications
+- Neural networks are also used in:
+  - Weather forecasting
+  - Brain-computer interfaces (like Neuralink)
+  - Text generation and translation
+  - Recommender systems (YouTube, Netflix, Instagram)
+  - Stock market prediction
+
+Conclusion
+- So in short, neural networks are everywhere — in our phones, hospitals, industries, space research, and even social media. 
+- They are one of the most powerful technologies driving the future.

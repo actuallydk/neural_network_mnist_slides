@@ -13,18 +13,11 @@ class MyScene(Slide):
         self.next_slide()
         self.clear()
 
-        # First slide: Neural Network text
-        title = Text("Neural Network", font_size=72)
-        self.play(Write(title))
-        self.next_slide()
-        self.clear()
-
-        # Load PNG images
-        img3_1 = ImageMobject("src/1-3.png").scale(2)
-        img3_2 = ImageMobject("src/2-3.png").scale(2)
-        img3_3 = ImageMobject("src/3-3.png").scale(2)
-        img3_4 = ImageMobject("src/3-4.png").scale(2)
-        group = VGroup(img3_1, img3_2, img3_3, img3_4).arrange(RIGHT, buff=1)
+        svg3_1 = SVGMobject("src/1-3.svg").scale(2).set_color(WHITE)
+        svg3_2 = SVGMobject("src/2-3.svg").scale(2).set_color(WHITE)
+        svg3_3 = SVGMobject("src/3-3.svg").scale(2).set_color(WHITE)
+        svg3_4 = SVGMobject("src/3-4.svg").scale(2).set_color(WHITE)
+        group = VGroup(svg3_1, svg3_2, svg3_3, svg3_4).arrange(RIGHT, buff=1)
         self.play(FadeIn(group))
         self.next_slide()
 
@@ -33,16 +26,15 @@ class MyScene(Slide):
         bl = (-4.0, -2.0, 0.0) # bottom left
         br = (4.0, -2.0, 0.0)  # bottom right
         self.play(
-        img3_1.animate.scale(0.7).move_to(ul),
-        img3_2.animate.scale(0.7).move_to(ur),
-        img3_3.animate.scale(0.7).move_to(bl),
-        img3_4.animate.scale(0.7).move_to(br),
-        run_time=0.75
+            svg3_1.animate.scale(0.7).move_to(ul),
+            svg3_2.animate.scale(0.7).move_to(ur),
+            svg3_3.animate.scale(0.7).move_to(bl),
+            svg3_4.animate.scale(0.7).move_to(br),
+            run_time=0.75
         )
-
-        # Brain in center (PNG version)
-        brain_img = ImageMobject("src/brain.png").scale(1.5).move_to((0.0, 0.0, 0.0))
-        self.play(FadeIn(brain_img))
+        # Brain in center
+        brain_svg = SVGMobject("src/brain.svg").scale(1.5).move_to((0.0, 0.0, 0.0))
+        self.play(Write(brain_svg))
         self.next_slide()
         self.clear()
 
@@ -89,30 +81,6 @@ class MyScene(Slide):
         
         self.play(Create(axes), Write(axes_labels))
         self.play(Create(graph), Write(graph_label))
-        self.next_slide()
-        self.clear()
-
-    # Trigonometric functions on same graph
-        axes = Axes(
-            x_range=[-2*PI, 2*PI, PI/2],
-            y_range=[-3, 3, 1],
-            x_length=12,
-            y_length=6,
-            axis_config={"include_numbers": False},
-        )
-        axes_labels = axes.get_axis_labels(x_label="x", y_label="f(x)")
-        
-        # Create the two trig functions
-        sin_graph = axes.plot(lambda x: np.sin(x), color=RED, x_range=[-2*PI, 2*PI])
-        cos_graph = axes.plot(lambda x: np.cos(x), color=BLUE, x_range=[-2*PI, 2*PI])
-        
-        # Create labels
-        sin_label = MathTex("\\sin x", color=RED).to_edge(UR).shift(LEFT*2)
-        cos_label = MathTex("\\cos x", color=BLUE).next_to(sin_label, DOWN)
-        
-        self.play(Create(axes), Write(axes_labels))
-        self.play(Create(sin_graph), Write(sin_label))
-        self.play(Create(cos_graph), Write(cos_label))
         self.next_slide()
         self.clear()
 
@@ -483,6 +451,7 @@ class MyScene(Slide):
         self.next_slide()
         self.clear()
 
+
         # --- APPLICATIONS OF NEURAL NETWORKS SLIDES (IMPROVED) ---
         # Slide: Applications of Neural Networks (title)
         app_title = MarkupText('Applications of <span fgcolor="{}">neural networks</span>'.format(YELLOW), font_size=60).move_to(ORIGIN)
@@ -506,8 +475,11 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: Speech recognition
-        speech_head = MarkupText('<span fgcolor="{}">Speech recognition</span>'.format(GREEN_B), font_size=54).to_edge(UP)
-        speech_points = ["Virtual assistants", "Siri", "Alexa", "Google Assistant"]
+        speech_head = MarkupText('<span fgcolor="{}">Speech recognition</span>'.format(GREEN_B), font_size=44).to_edge(UP)
+        speech_points = [
+            "Virtual assistants",
+            "Siri, Alexa, Google Assistant", 
+        ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in speech_points
         ])
@@ -517,8 +489,12 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: Medical diagnosis
-        med_head = MarkupText('<span fgcolor="{}">Medical diagnosis</span>'.format(RED), font_size=54).to_edge(UP)
-        med_points = ["AI-assisted disease detection from patient data", "Can make breakthrough in Tumor Diagnosis in 5 years"]
+        med_head = MarkupText('<span fgcolor="{}">Medical diagnosis</span>'.format(RED), font_size=44).to_edge(UP)
+        med_points = [
+            "AI-assisted disease detection from patient data",
+            "Can make breakthrough in Tumor Diagnosis in 5 years",
+            "indentification of cancer, diabetes, and heart problems"
+        ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in med_points
         ])
@@ -528,8 +504,11 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: Drug Discovery
-        drug_head = MarkupText('<span fgcolor="{}">Drug Discovery</span>'.format(PURPLE_B), font_size=54).to_edge(UP)
-        drug_points = ["Accelerating new medicine development"]
+        drug_head = MarkupText('<span fgcolor="{}">Drug Discovery</span>'.format(PURPLE_B), font_size=44).to_edge(UP)
+        drug_points = [
+            "Prediction of drug combinations",
+            "Saves Years of research"
+        ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in drug_points
         ])
@@ -539,8 +518,13 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: Protein Structure Discovery
-        prot_head = MarkupText('<span fgcolor="{}">Protein Structure Discovery</span>'.format(ORANGE), font_size=54).to_edge(UP)
-        prot_points = ["AlphaFold: Nobel-level protein folding predictions", "Job which would take 50 YEARS"]
+        prot_head = MarkupText('<span fgcolor="{}">Protein Structure Discovery</span>'.format(ORANGE), font_size=44).to_edge(UP)
+        prot_points = [
+            "AlphaFold: Protein Structures",
+            "Predicted Structures which would have taken 50-100 years",
+            "This was a major scientific breakthrough",
+            "They received a NOBEL PRICE in 2024"
+        ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in prot_points
         ])
@@ -550,10 +534,27 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: ChatGPT and LLMs
-        chat_head = MarkupText('<span fgcolor="{}">ChatGPT &amp; LLMs</span>'.format(YELLOW), font_size=54).to_edge(UP)
+        chat_head = MarkupText('<span fgcolor="{}">ChatGPT &amp; LLMs</span>'.format(YELLOW), font_size=44).to_edge(UP)
         chat_points = [
-            "Neural networks as the core of language models",
-            "Text generation, Q&amp;A, and more"
+            "Building Block of tools like ChatGPT",
+            "Addition and Subtraction of LLMs"
+        ]
+        bullets = VGroup(*[
+            MarkupText(f"• {pt}", font_size=40) for pt in chat_points
+        ])
+        bullets.arrange(DOWN, aligned_edge=LEFT, buff=0.6).next_to(chat_head, DOWN, buff=1.2)
+        self.play(Write(chat_head), FadeIn(bullets))
+        self.next_slide()
+        self.clear()
+
+        # Slide: ChatGPT and LLMs
+        chat_head = MarkupText('<span fgcolor="{}">Reccomendation System &amp; LLMs</span>'.format(YELLOW), font_size=54).to_edge(UP)
+        chat_points = [
+            "It is used to in reccomendation systems like",
+            "Spotify",
+            "Youtube",
+            "Instagram",
+            "Any Social Media!"
         ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in chat_points
@@ -567,9 +568,9 @@ class MyScene(Slide):
         misc_head = MarkupText('<span fgcolor="{}">Other</span>'.format(GREY_B), font_size=54).to_edge(UP)
         misc_points = [
             "Weather forecasting",
-            "Brain-computer interfaces",
-            "Recommender systems",
-            "Stock market prediction"
+            "Brain-computer interfaces (like NeuralLink)",
+            "Stock market prediction",
+            "Fraud Detection"
         ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in misc_points
