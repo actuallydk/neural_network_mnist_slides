@@ -13,11 +13,18 @@ class MyScene(Slide):
         self.next_slide()
         self.clear()
 
-        svg3_1 = SVGMobject("src/1-3.svg").scale(2).set_color(WHITE)
-        svg3_2 = SVGMobject("src/2-3.svg").scale(2).set_color(WHITE)
-        svg3_3 = SVGMobject("src/3-3.svg").scale(2).set_color(WHITE)
-        svg3_4 = SVGMobject("src/3-4.svg").scale(2).set_color(WHITE)
-        group = VGroup(svg3_1, svg3_2, svg3_3, svg3_4).arrange(RIGHT, buff=1)
+        # First slide: Neural Network text
+        title = Text("Neural Network", font_size=72)
+        self.play(Write(title))
+        self.next_slide()
+        self.clear()
+
+        # Load PNG images
+        img3_1 = ImageMobject("src/1-3.png").scale(2)
+        img3_2 = ImageMobject("src/2-3.png").scale(2)
+        img3_3 = ImageMobject("src/3-3.png").scale(2)
+        img3_4 = ImageMobject("src/3-4.png").scale(2)
+        group = VGroup(img3_1, img3_2, img3_3, img3_4).arrange(RIGHT, buff=1)
         self.play(FadeIn(group))
         self.next_slide()
 
@@ -26,18 +33,19 @@ class MyScene(Slide):
         bl = (-4.0, -2.0, 0.0) # bottom left
         br = (4.0, -2.0, 0.0)  # bottom right
         self.play(
-            svg3_1.animate.scale(0.7).move_to(ul),
-            svg3_2.animate.scale(0.7).move_to(ur),
-            svg3_3.animate.scale(0.7).move_to(bl),
-            svg3_4.animate.scale(0.7).move_to(br),
-            run_time=0.75
+        img3_1.animate.scale(0.7).move_to(ul),
+        img3_2.animate.scale(0.7).move_to(ur),
+        img3_3.animate.scale(0.7).move_to(bl),
+        img3_4.animate.scale(0.7).move_to(br),
+        run_time=0.75
         )
-        # Brain in center
-        brain_svg = SVGMobject("src/brain.svg").scale(1.5).move_to((0.0, 0.0, 0.0))
-        self.play(Write(brain_svg))
+
+        # Brain in center (PNG version)
+        brain_img = ImageMobject("src/brain.png").scale(1.5).move_to((0.0, 0.0, 0.0))
+        self.play(FadeIn(brain_img))
         self.next_slide()
         self.clear()
-        
+
         # 70,000 Images
         title = Text("70,000 Images", font_size=72)
         self.play(Write(title))
@@ -485,10 +493,9 @@ class MyScene(Slide):
         # Slide: Image recognition
         img_head = MarkupText('<span fgcolor="{}">Image recognition</span>'.format(BLUE_B), font_size=54).to_edge(UP)
         img_points = [
-            "Handwritten digit recognition (MNIST)",
+            "Image Recognition (in Google Photos, Apple Photos, etc)",
             "Face ID and security systems",
             "Object detection in CCTV footage",
-            "Photo search (Google Drive)"
         ]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in img_points
@@ -500,7 +507,7 @@ class MyScene(Slide):
 
         # Slide: Speech recognition
         speech_head = MarkupText('<span fgcolor="{}">Speech recognition</span>'.format(GREEN_B), font_size=54).to_edge(UP)
-        speech_points = ["Virtual assistants (Siri, Google Assistant)"]
+        speech_points = ["Virtual assistants", "Siri", "Alexa", "Google Assistant"]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in speech_points
         ])
@@ -511,7 +518,7 @@ class MyScene(Slide):
 
         # Slide: Medical diagnosis
         med_head = MarkupText('<span fgcolor="{}">Medical diagnosis</span>'.format(RED), font_size=54).to_edge(UP)
-        med_points = ["AI-assisted disease detection from patient data"]
+        med_points = ["AI-assisted disease detection from patient data", "Can make breakthrough in Tumor Diagnosis in 5 years"]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in med_points
         ])
@@ -533,7 +540,7 @@ class MyScene(Slide):
 
         # Slide: Protein Structure Discovery
         prot_head = MarkupText('<span fgcolor="{}">Protein Structure Discovery</span>'.format(ORANGE), font_size=54).to_edge(UP)
-        prot_points = ["AlphaFold: Nobel-level protein folding predictions"]
+        prot_points = ["AlphaFold: Nobel-level protein folding predictions", "Job which would take 50 YEARS"]
         bullets = VGroup(*[
             MarkupText(f"• {pt}", font_size=40) for pt in prot_points
         ])
@@ -557,7 +564,7 @@ class MyScene(Slide):
         self.clear()
 
         # Slide: Miscellaneous
-        misc_head = MarkupText('<span fgcolor="{}">Miscellaneous</span>'.format(GREY_B), font_size=54).to_edge(UP)
+        misc_head = MarkupText('<span fgcolor="{}">Other</span>'.format(GREY_B), font_size=54).to_edge(UP)
         misc_points = [
             "Weather forecasting",
             "Brain-computer interfaces",
